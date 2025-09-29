@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 from brain import settings
+from brain.scoring.heuristics import make_drafts, simple_relevance_score
 
 
 app = FastAPI()
@@ -48,83 +49,6 @@ class ScoreAndDraftResponse(BaseModel):
     results: List[ScoreResult]
 
 
-RELEVANCE_KEYWORDS = {
-    "ski rack": 0.35,
-    "roof rack": 0.25,
-    "skis falling": 0.3,
-    "skis slipping": 0.3,
-    "parking lot": 0.15,
-    "tailgate": 0.15,
-    "dings": 0.2,
-    "strap": 0.15,
-    "bungee": 0.15,
-    "magnet": 0.2,
-    "protect edges": 0.25,
-}
-
-GOODWILL_KEYWORDS = {
-    "first season": 0.1,
-    "any tips": 0.1,
-    "car setup": 0.1,
-    "winter prep": 0.1,
-    "newbie": 0.1,
-}
-
-
-def _combined_text(post: Post) -> str:
-    fields = [post.title, post.selftext or ""]
-    return " ".join(part for part in fields if part).lower()
-
-
-def _score_post(post: Post) -> tuple[float, str]:
-    text = _combined_text(post)
-    score = 0.0
-
-    for keyword, weight in RELEVANCE_KEYWORDS.items():
-        if keyword in text:
-            score += weight
-
-    for keyword, weight in GOODWILL_KEYWORDS.items():
-        if keyword in text:
-            score += weight
-
-    score = min(score, 1.0)
-    rationale = "keyword match" if score > 0 else "no strong match"
-    return score, rationale
-
-
-def _topic_hint(post: Post) -> str:
-    if post.title:
-        clipped = post.title.strip().split("?")[0][:60]
-        return clipped or "your setup"
-    if post.subreddit:
-        return f"the crew in r/{post.subreddit}"
-    return "your setup"
-
-
-def _generate_drafts(post: Post) -> List[Draft]:
-    topic = _topic_hint(post)
-
-    goodwill_text = (
-        f"If you're dialing {topic}, wiping the rack pads before loading keeps edges"
-        " happy on the drive back down."
-    )
-    soft_reco_text = (
-        "A compact clamp-style holder that leans skis at a steady angle kept ours"
-        " from chattering on Snoqualmie runs last winter."
-    )
-    story_text = (
-        "Had a night mission at Stevens where a quick bungee around the tips stopped"
-        " the slide and saved the hatch paint."
-    )
-
-    return [
-        Draft(tone="goodwill", text=goodwill_text),
-        Draft(tone="soft_reco", text=soft_reco_text),
-        Draft(tone="story", text=story_text),
-    ]
-
-
 @app.get("/health")
 def health() -> dict:
     """Simple readiness probe for monitoring."""
@@ -155,8 +79,9 @@ def score_and_draft(payload: ScoreAndDraftRequest) -> ScoreAndDraftResponse:
 
     results: List[ScoreResult] = []
     for post in payload.posts:
-        score, rationale = _score_post(post)
-        drafts = _generate_drafts(post)
+        score = simple_relevance_score(post.title, post.selftext)
+        rationale = "keyword match" if score > 0 else "no strong match"
+        drafts = make_drafts(post)
         results.append(
             ScoreResult(
                 id=post.id,
