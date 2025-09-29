@@ -9,9 +9,9 @@ See `docs/CODING_PLAN.md` for the delivery outline and `docs/GUARDRAILS.md` for 
 > **Disclosure policy**: All drafts must exclude disclosures; the human reviewer adds disclosure when appropriate before posting.
 
 ## Project Docs
-- `docs/CODING_PLAN.md` – MVP scope, constraints, and deferred items.
-- `docs/GUARDRAILS.md` – Posting safeguards and disclosure rules.
-- `docs/ROADMAP.md` – Execution checklist for the MVP, guardrails, and ops setup.
+- `docs/CODING_PLAN.md` - MVP scope, constraints, and deferred items.
+- `docs/GUARDRAILS.md` - Posting safeguards and disclosure rules.
+- `docs/ROADMAP.md` - Execution checklist for the MVP, guardrails, and ops setup.
 
 ## Architecture
 n8n (Cron)
@@ -50,6 +50,26 @@ astroturfBbot/
   .env.example
   README.md
 ```
+
+## Run the Brain locally (Windows)
+1. Activate the virtualenv:
+   ```powershell
+   .\.venv\Scripts\activate
+   ```
+2. Install dependencies:
+   ```powershell
+   pip install fastapi uvicorn pydantic python-dotenv
+   ```
+3. Launch the API:
+   ```powershell
+   python -m uvicorn brain.app:app --reload
+   ```
+4. Test the endpoints:
+   ```bash
+   curl http://127.0.0.1:8000/health
+   curl http://127.0.0.1:8000/config
+   curl -X POST http://127.0.0.1:8000/score_and_draft -H "Content-Type: application/json" -d '{"posts":[{"id":"t3_demo","title":"Need a better ski rack","selftext":null}]}'
+   ```
 
 ## Quickstart
 1. Create a Reddit app (type `script`) -> capture `client_id` and `secret`.
