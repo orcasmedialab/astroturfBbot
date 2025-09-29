@@ -10,7 +10,7 @@
 ## Guardrails To Enforce
 - [ ] Keep disclosures out of every automated draft so reviewers add them manually.
 - [ ] Respect each subreddit's posting limits by throttling per community.
-- [ ] Flag no-link windows or other subreddit bans instead of posting.
+- [ ] Allow links in product-relevant drafts (preferred **<u>when relevant</u>**), require Discord approval for any linked post, and flag subreddit link bans before posting. Links will only be included in content that is talking about products.
 - [ ] Require human approval before any reply reaches Reddit.
 
 ## Operational Setup
