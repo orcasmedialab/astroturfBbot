@@ -4,9 +4,14 @@ A hybrid workflow for Reddit community participation with **human-in-the-loop ap
 - Orchestration: n8n (cron -> fetch -> score/draft -> Discord approval -> post)
 - Brain: Python FastAPI service that scores threads and drafts 2-3 natural replies (no auto-disclosure)
 
-See `CODING_PLAN.md` for the delivery outline and `GUARDRAILS.md` for the operating guardrails.
+See `docs/CODING_PLAN.md` for the delivery outline and `docs/GUARDRAILS.md` for the operating guardrails.
 
 > **Disclosure policy**: All drafts must exclude disclosures; the human reviewer adds disclosure when appropriate before posting.
+
+## Project Docs
+- `docs/CODING_PLAN.md` – MVP scope, constraints, and deferred items.
+- `docs/GUARDRAILS.md` – Posting safeguards and disclosure rules.
+- `docs/ROADMAP.md` – Execution checklist for the MVP, guardrails, and ops setup.
 
 ## Architecture
 n8n (Cron)
@@ -18,27 +23,32 @@ n8n (Cron)
 
 ## Repo layout
 ```
-astroturf-bot/
+astroturfBbot/
   brain/
+    __init__.py
     app.py
     settings.py
-  prompts/
-    persona_skiing.json
-    goodwill.txt
-    soft_reco.txt
-    story.txt
-  scoring/
-    heuristics.py
-    embeddings.py
-    settings.py
+    prompts/
+      goodwill.txt
+      persona_skiing.json
+      soft_reco.txt
+      story.txt
+    scoring/
+      __init__.py
+      embeddings.py
+      heuristics.py
+  docs/
+    CODING_PLAN.md
+    GUARDRAILS.md
+    ROADMAP.md
   n8n/
-    docker-compose.yml
-  workflows/
-    reddit-scout.json
-    reddit-publish.json
+    workflows/
+      reddit-publish.json
+      reddit-scout.json
   ops/
-  README.md
+  .env
   .env.example
+  README.md
 ```
 
 ## Quickstart
