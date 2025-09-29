@@ -24,3 +24,6 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+#Notes and other irrelevant files/docs
+local_docs/
