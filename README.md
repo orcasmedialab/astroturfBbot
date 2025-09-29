@@ -19,6 +19,7 @@ n8n (Cron)
 ├── astroturf-bot/
 │   ├── brain/
 │   │   ├── app.py
+│   │   ├── settings.py
 │   ├── prompts/
 │   │   ├── persona_skiing.json
 │   │   ├── goodwill.txt
