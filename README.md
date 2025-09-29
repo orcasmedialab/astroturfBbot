@@ -1,4 +1,4 @@
-# SlopeScout (working title)
+# Astroturf Bot
 
 A hybrid workflow for Reddit community participation with **human-in-the-loop approvals**.
 - Orchestration: n8n (cron → fetch → score/draft → Discord approval → post)
@@ -15,26 +15,28 @@ n8n (Cron)
 - On Approve → Post via Reddit API
 
 ## Repo layout
-astroturf-bot/
-brain/
-app.py
-prompts/
-persona_skiing.json
-goodwill.txt
-soft_reco.txt
-story.txt
-scoring/
-heuristics.py
-embeddings.py
-settings.py
-n8n/
-docker-compose.yml
-workflows/
-reddit-scout.json
-reddit-publish.json
-ops/
-README.md
-.env.example
+```bash
+├── astroturf-bot/
+│   ├── brain/
+│   │   ├── app.py
+│   ├── prompts/
+│   │   ├── persona_skiing.json
+│   │   ├── goodwill.txt
+│   │   ├── soft_reco.txt
+│   │   ├── story.txt
+│   ├── scoring/
+│   │   ├── heuristics.py
+│   │   ├── embeddings.py
+│   │   ├── settings.py
+│   ├── n8n/
+│   │   ├── docker-compose.yml
+│   ├── workflows/
+│   │   ├── reddit-scout.json
+│   │   ├── reddit-publish.json
+│   ├── ops/
+│   ├── README.md
+│   ├── .env.example
+```
 
 ## Quickstart
 1. Create a **Reddit app** (type `script`) → get `client_id` & `secret`.
@@ -46,6 +48,7 @@ README.md
     python -m venv .venv && source .venv/bin/activate
     pip install fastapi uvicorn httpx openai
     uvicorn app:app --reload
+    ```
 5. n8n:
     cd n8n
     docker compose up -d
