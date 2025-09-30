@@ -153,8 +153,8 @@ def _build_draft(category: str, post: "Post") -> dict[str, object]:
 
     if category == "goodwill":
         text = (
-            f"If you're dialing {topic}, brushing snow off the rack pads and snugging a quick strap before you "
-            "buckle keeps the edges off the paint."
+            "Quick wipe of the rack pads and a snug strap before you buckle keeps the skis off the paint."
+            " Did that on a Crystal lot changeover last week and it held fine."
         )
         return {"text": text, "include_link": False, "link_token": None}
 
