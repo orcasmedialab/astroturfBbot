@@ -1,5 +1,119 @@
 {
-  "name": "",
-  "nodes": [],
-  "connections": {}
+  "name": "reddit-scout",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "options": {
+          "once": true
+        }
+      },
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{\n  posts: [\n    { id: 't3_test1', title: 'Looking for commuter tips', selftext: 'Any advice on keeping my routine efficient?', subreddit: 'exampleSub', url: 'https://reddit.com/r/exampleSub/comments/t3_test1' },\n    { id: 't3_test2', title: 'Car organization ideas', selftext: 'Trying to tidy the backseat for weekday errands.', subreddit: 'exampleSub', url: 'https://reddit.com/r/exampleSub/comments/t3_test2' },\n    { id: 't3_test3', title: 'Morning routine gear checklist', selftext: 'What do you check before heading out?', subreddit: 'exampleSub', url: 'https://reddit.com/r/exampleSub/comments/t3_test3' }\n  ]\n}];"
+      },
+      "name": "DummyPosts",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8000/score_and_draft",
+        "options": {
+          "bodyContentType": "json"
+        },
+        "responseFormat": "json"
+      },
+      "name": "Brain Score",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const results = items[0].json.results || [];\nreturn results.map(entry => ({\n  json: {\n    title: entry.title || '',\n    subreddit: entry.subreddit || '',\n    category: entry.category || '',\n    score: entry.score || 0,\n    draftText: entry.draft?.text || '',\n    includeLink: entry.draft?.include_link || false,\n    linkToken: entry.draft?.link_token || null,\n    postUrl: entry.postUrl || entry.url || ''\n  }\n}));"
+      },
+      "name": "FlattenResults",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.DISCORD_WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {
+          "bodyContentType": "json"
+        },
+        "bodyParametersJson": "={{ JSON.stringify({ embeds: [{ title: $json.title, description: `Category: ${$json.category} | Score: ${$json.score}\n\n${$json.draftText}${$json.linkToken ? `\n\nToken: ${$json.linkToken}` : ''}`, footer: { text: $json.postUrl } }] }) }}"
+      },
+      "name": "Discord",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    }
+  ],
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "DummyPosts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DummyPosts": {
+      "main": [
+        [
+          {
+            "node": "Brain Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brain Score": {
+      "main": [
+        [
+          {
+            "node": "FlattenResults",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FlattenResults": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "staticData": null
 }

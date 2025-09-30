@@ -141,3 +141,16 @@ Legacy `brain/prompts/` assets have been removed. Persona and tone live in `conf
     ```
     Import `workflows/reddit-scout.json` and `workflows/reddit-publish.json`, set credentials, then run once manually.
 7. Approve a draft in Discord to test end-to-end.
+
+## Phase 2A: n8n skeleton + Discord ping
+1. Ensure `DISCORD_WEBHOOK_URL` is set in your repo `.env`.
+2. Launch n8n:
+   ```powershell
+   docker compose -f n8n/docker-compose.yml up -d
+   ```
+3. Browse to http://localhost:5678 and import `n8n/workflows/reddit-scout.json`.
+4. Edit the Discord node URL if needed so it reads `{{$env.DISCORD_WEBHOOK_URL}}`, then click **Execute Node** to test.
+5. Confirm a message posts in Discord showing the title, category, score, and draft text.
+
+> Brain must be running locally at http://127.0.0.1:8000 (the workflow reaches it via http://host.docker.internal:8000).
+
