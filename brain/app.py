@@ -5,10 +5,10 @@
     python -m uvicorn brain.app:app --reload
 """
 
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from brain import settings
 from brain.scoring.heuristics import make_drafts, simple_relevance_score
@@ -29,7 +29,7 @@ class Post(BaseModel):
 
 
 class Draft(BaseModel):
-    tone: str = Field(..., regex="^(goodwill|soft_reco|story)$")
+    tone: Literal["goodwill", "soft_reco", "story"]
     text: str
 
 
@@ -98,3 +98,4 @@ def score_and_draft(payload: ScoreAndDraftRequest) -> ScoreAndDraftResponse:
 # curl http://127.0.0.1:8000/health
 # curl http://127.0.0.1:8000/config
 # curl -X POST http://127.0.0.1:8000/score_and_draft -H "Content-Type: application/json" -d "{"posts":[{"id":"t3_demo","title":"Ski rack worry","selftext":null}]}"
+
