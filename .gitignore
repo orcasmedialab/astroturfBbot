@@ -25,5 +25,7 @@ build/
 .DS_Store
 Thumbs.db
 
-#Notes and other irrelevant files/docs
+#Notes, tests, and other irrelevant files/docs
 local_docs/
+tests/
+_probe.json
