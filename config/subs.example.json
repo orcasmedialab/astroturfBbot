@@ -1,0 +1,10 @@
+[
+  {
+    "name": "exampleSub",
+    "links_allowed": true,
+    "link_restrictions": [],
+    "link_cooldown_hours": 96,
+    "max_comments_per_day": 3,
+    "notes": "Generic example; customize per subreddit."
+  }
+]

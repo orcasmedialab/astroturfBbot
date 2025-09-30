@@ -72,6 +72,12 @@ def config() -> dict:
         "env": settings.ENV,
         "user_agent_set": bool(user_agent and "<your_username>" not in user_agent),
         "openai_key_present": bool(settings.OPENAI_API_KEY),
+        "config_files": {
+            "defaults": settings.config_file_exists(settings.CONFIG_DEFAULTS_PATH),
+            "persona": settings.config_file_exists(settings.CONFIG_PERSONA_PATH),
+            "subs": settings.config_file_exists(settings.CONFIG_SUBS_PATH),
+            "keywords": settings.config_file_exists(settings.CONFIG_KEYWORDS_PATH),
+        },
     }
 
 

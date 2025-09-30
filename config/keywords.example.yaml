@@ -1,0 +1,16 @@
+# Category & synonym patterns (case-insensitive regex strings)
+normalize:
+  replace:
+    - { from: "[’]", to: "'" }
+    - { from: "[-–—]", to: " " }
+product_signals:
+  problem: ["slide", "sliding", "slip", "fall off", "skate", "wander"]
+  context: ["parking[\\s-]?lot", "buckling boots", "boot buckle", "tailgate", "lean(ing)? (on|against) (car|vehicle)"]
+  solution: ["holder", "compact holder", "lean spot", "protect(ion)? edge(s)?", "paint", "ding(s)?"]
+goodwill_signals:
+  beginner: ["first season", "beginner", "new to .*", "any tips", "organize gear", "car setup", "winter prep", "parking[\\s-]?lot routine"]
+weights:
+  problem_and_context: 0.5
+  problem_only: 0.3
+  solution: 0.2
+  beginner: 0.2

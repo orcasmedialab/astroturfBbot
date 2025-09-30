@@ -29,3 +29,9 @@ Thumbs.db
 local_docs/
 tests/
 _probe.json
+
+# Config overrides
+/config/*.yaml
+/config/*.json
+!/config/*example*.yaml
+!/config/*example*.json

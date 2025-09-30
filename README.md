@@ -24,6 +24,11 @@ n8n (Cron)
 ## Repo layout
 ```
 astroturfBbot/
+  config/
+    defaults.example.yaml
+    keywords.example.yaml
+    persona.example.json
+    subs.example.json
   brain/
     __init__.py
     app.py
@@ -58,7 +63,7 @@ astroturfBbot/
    ```
 2. Install dependencies:
    ```powershell
-   pip install fastapi uvicorn pydantic python-dotenv
+   pip install fastapi uvicorn pydantic python-dotenv pyyaml
    ```
 3. Launch the API:
    ```powershell
@@ -96,21 +101,41 @@ astroturfBbot/
 - `link_token` is a placeholder string you replace with the approved URL when posting; it is `null` for goodwill drafts.
 - `risk_notes` captures guardrails, such as subreddit link bans, to review before approving.
 
+## Configuration files
+Configuration lives under `config/` and is loaded via environment variables:
+
+- `CONFIG_DEFAULTS_PATH` → YAML of scoring thresholds and drafting knobs (default `config/defaults.yaml`).
+- `CONFIG_PERSONA_PATH` → JSON persona/tone guidance.
+- `CONFIG_SUBS_PATH` → JSON array describing subreddit rules.
+- `CONFIG_KEYWORDS_PATH` → YAML of keyword patterns and weights.
+
+Tracked `*.example.*` files provide neutral defaults—copy them to their non-example counterparts for real use:
+
+```bash
+cp config/defaults.example.yaml config/defaults.yaml
+cp config/persona.example.json config/persona.json
+cp config/subs.example.json config/subs.json
+cp config/keywords.example.yaml config/keywords.yaml
+```
+
+Keep product- or campaign-specific data in those config files rather than in Python modules or prompts. If you rely on YAML configs, ensure `pyyaml` is installed (see install step above).
+
 ## Quickstart
 1. Create a Reddit app (type `script`) -> capture `client_id` and `secret`.
 2. Create a Discord webhook (Server Settings -> Integrations -> Webhooks).
-3. Copy `.env.example` to `.env` and fill secrets.
-4. Brain:
+3. Copy `.env.example` to `.env`, fill secrets, and adjust the `CONFIG_*` paths if your config files live elsewhere.
+4. Copy the example configs under `config/` to their working counterparts and edit them for your brand.
+5. Brain:
     ```bash
     cd brain
     python -m venv .venv && source .venv/bin/activate
-    pip install fastapi uvicorn httpx openai
+    pip install fastapi uvicorn httpx openai pyyaml
     uvicorn app:app --reload
     ```
-5. n8n:
+6. n8n:
     ```bash
     cd n8n
     docker compose up -d
     ```
     Import `workflows/reddit-scout.json` and `workflows/reddit-publish.json`, set credentials, then run once manually.
-6. Approve a draft in Discord to test end-to-end.
+7. Approve a draft in Discord to test end-to-end.
