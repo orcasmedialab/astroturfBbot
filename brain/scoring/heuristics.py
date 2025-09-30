@@ -112,7 +112,13 @@ def select_response(
 
     category, rationale = _categorize(analysis)
     draft_payload = _build_draft(category, post)
-    risk_notes = "Low-signal thread; skip for now." if category == "skip" else None
+    risk_notes = None
+
+    if category == "product":
+        # TODO: consult subreddit rule cache to confirm link allowances.
+        risk_notes = "Links may be restricted in this subreddit"
+    elif category == "skip":
+        risk_notes = "Low-signal thread; skip for now."
 
     return analysis, category, rationale, draft_payload, risk_notes
 
