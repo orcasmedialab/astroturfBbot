@@ -17,7 +17,7 @@ See `docs/CODING_PLAN.md` for the delivery outline and `docs/GUARDRAILS.md` for 
 n8n (Cron)
 - Fetch new posts (Reddit API, script app)
 - POST /score_and_draft -> Brain (FastAPI + Codex)
-- Return top candidates + 3 drafts
+- Receive scored candidates plus a single recommended draft payload
 - Discord webhook (Approve / Edit / Decline)
 - On Approve -> Post via Reddit API
 
@@ -70,6 +70,31 @@ astroturfBbot/
    curl http://127.0.0.1:8000/config
    curl -X POST http://127.0.0.1:8000/score_and_draft -H "Content-Type: application/json" -d '{"posts":[{"id":"t3_demo","title":"Need a better ski rack","selftext":null}]}'
    ```
+
+### `/score_and_draft` response snapshot
+```json
+{
+  "results": [
+    {
+      "id": "t3_demo",
+      "score": 0.7,
+      "rationale": "rack/parking-lot slip signals",
+      "category": "product",
+      "draft": {
+        "text": "If your skis are sliding while you buckle boots, a compact clamp holder like this {{PRODUCT_URL}} keeps them locked until you're rolling again.",
+        "include_link": true,
+        "link_token": "{{PRODUCT_URL}}"
+      },
+      "risk_notes": "Links may be restricted in this subreddit"
+    }
+  ]
+}
+```
+
+- `category` signals intent: `product` drafts invite a product mention, `goodwill` stays link-free, `skip` surfaces low-signal threads.
+- `include_link` is `true` only when the draft expects a human to swap the `link_token` (e.g., `{{PRODUCT_URL}}`) before posting.
+- `link_token` is a placeholder string you replace with the approved URL when posting; it is `null` for goodwill drafts.
+- `risk_notes` captures guardrails, such as subreddit link bans, to review before approving.
 
 ## Quickstart
 1. Create a Reddit app (type `script`) -> capture `client_id` and `secret`.
