@@ -120,6 +120,8 @@ cp config/keywords.example.yaml config/keywords.yaml
 
 Keep product- or campaign-specific data in those config files rather than in Python modules or prompts. If you rely on YAML configs, ensure `pyyaml` is installed (see install step above).
 
+Legacy `brain/prompts/` assets have been removed. Persona and tone live in `config/persona.json` (copy from `persona.example.json`), and any optional human drafting notes belong in `config/templates.md` (see `config/templates.example.md`).
+
 ## Quickstart
 1. Create a Reddit app (type `script`) -> capture `client_id` and `secret`.
 2. Create a Discord webhook (Server Settings -> Integrations -> Webhooks).

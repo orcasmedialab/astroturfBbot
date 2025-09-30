@@ -35,3 +35,5 @@ _probe.json
 /config/*.json
 !/config/*example*.yaml
 !/config/*example*.json
+/config/templates.md
+/config/templates/*.md
