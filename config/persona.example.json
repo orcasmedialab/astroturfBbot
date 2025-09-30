@@ -1,0 +1,7 @@
+{
+  "style": "helpful, concise, friendly; avoid hype; prefer practical tips",
+  "tone": "conversational, knowledgeable, non-promotional",
+  "dos": ["be specific", "use short sentences", "acknowledge OP context"],
+  "donts": ["sound like an ad", "make unverifiable claims"],
+  "target_length": "1-3 sentences"
+}

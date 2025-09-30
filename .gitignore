@@ -24,3 +24,16 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+#Notes, tests, and other irrelevant files/docs
+local_docs/
+tests/
+_probe.json
+
+# Config overrides
+/config/*.yaml
+/config/*.json
+!/config/*example*.yaml
+!/config/*example*.json
+/config/templates.md
+/config/templates/*.md

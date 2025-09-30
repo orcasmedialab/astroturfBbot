@@ -1,0 +1,10 @@
+# Brand-agnostic defaults
+scoring:
+  product_threshold: 0.45   # score above which a post is considered product-relevant
+  goodwill_threshold: 0.15  # score above which a post is considered goodwill-relevant
+  cap: 1.0
+
+drafting:
+  include_link_for_product: true
+  link_token: "{{PRODUCT_URL}}"
+  goodwill_allow_links: false
