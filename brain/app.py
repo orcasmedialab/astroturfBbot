@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from brain import settings
-from brain.scoring.heuristics import make_drafts, simple_relevance_score
+from brain.scoring.heuristics import select_response
 
 
 app = FastAPI()
@@ -28,16 +28,18 @@ class Post(BaseModel):
     url: Optional[str] = None
 
 
-class Draft(BaseModel):
-    tone: Literal["goodwill", "soft_reco", "story"]
+class DraftPayload(BaseModel):
     text: str
+    include_link: bool
+    link_token: Optional[str] = None
 
 
 class ScoreResult(BaseModel):
     id: str
     score: float
     rationale: str
-    drafts: List[Draft]
+    category: Literal["goodwill", "product", "skip"]
+    draft: DraftPayload
     risk_notes: Optional[str] = None
 
 
@@ -79,16 +81,15 @@ def score_and_draft(payload: ScoreAndDraftRequest) -> ScoreAndDraftResponse:
 
     results: List[ScoreResult] = []
     for post in payload.posts:
-        score = simple_relevance_score(post.title, post.selftext)
-        rationale = "keyword match" if score > 0 else "no strong match"
-        drafts = make_drafts(post)
+        analysis, category, rationale, draft_payload, risk_notes = select_response(post)
         results.append(
             ScoreResult(
                 id=post.id,
-                score=round(score, 2),
+                score=round(analysis.score, 2),
                 rationale=rationale,
-                drafts=drafts,
-                risk_notes=None,
+                category=category,
+                draft=DraftPayload(**draft_payload),
+                risk_notes=risk_notes,
             )
         )
 
