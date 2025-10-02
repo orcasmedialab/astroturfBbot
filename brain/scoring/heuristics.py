@@ -32,34 +32,32 @@ class PostAnalysis:
 
 DEFAULT_KEYWORDS = {
     "product_signals": {
-        "problem": [r"\bslide\b", r"\bsliding\b", r"\bslip\b", r"fall[\s-]?off", r"\bskate\b", r"\bwander\b"],
+        "problem": [r"\bslip\b", r"\bsliding\b", r"fall[\s-]?off", r"\bscratch\b", r"\bscuff\b"],
         "context": [
-            r"buckling?\s+boots?",
-            r"boot\s+buckle",
-            r"parking[\s-]?lot",
-            r"parking\s+lot\s+changeover",
-            r"tailgate",
-            r"lean(?:ing)?\s+(?:on|against)\s+(?:the\s+)?(?:car|vehicle)",
+            r"entryway",
+            r"commute",
+            r"doorway",
+            r"car\s+door",
+            r"desk\s+setup",
+            r"pet\s+area",
         ],
         "solution": [
-            r"protect(?:ing)?\s+edges?",
-            r"edge\s+dings?",
-            r"\bpaint\b",
             r"holder",
-            r"lean\s+spot",
-            r"compact\s+holder",
+            r"organizer",
+            r"hook",
+            r"mat",
+            r"tray",
         ],
     },
     "goodwill_signals": {
         "beginner": [
-            r"first\s+season",
+            r"first\s+time",
             r"beginner",
-            r"new\s+to\s+skiing",
-            r"tips\s+for",
-            r"organize\s+gear",
-            r"car\s+setup",
-            r"winter\s+prep",
-            r"parking\s+lot\s+routine",
+            r"new\s+here",
+            r"any\s+tips",
+            r"how\s+do\s+you\s+organize",
+            r"checklist",
+            r"setup\s+tips",
         ]
     },
     "weights": {
@@ -179,7 +177,7 @@ def _categorize(analysis: PostAnalysis) -> tuple[Literal["goodwill", "product", 
     goodwill_threshold = scoring_cfg.get("goodwill_threshold", 0.15)
 
     if analysis.has_problem and analysis.has_context and analysis.score >= product_threshold:
-        return "product", "rack/parking-lot slip signals"
+        return "product", "organizer slip signals"
     if analysis.score >= goodwill_threshold or analysis.has_beginner or analysis.has_context or analysis.has_solution:
         return "goodwill", "beginner/setup keywords"
     return "skip", "no strong match"
@@ -194,17 +192,11 @@ def _build_draft(category: str, post: "Post") -> dict[str, object]:
     goodwill_allow_links = drafting_cfg.get("goodwill_allow_links", False)
 
     if category == "product":
-        text = (
-            "If your skis are sliding while you buckle boots, a compact clamp holder like this "
-            f"{link_token} keeps them locked until you're rolling again."
-        )
+        text = _choose_draft_text("product", link_token)
         return {"text": text, "include_link": include_link_for_product, "link_token": link_token}
 
     if category == "goodwill":
-        text = (
-            "Quick wipe of the rack pads and a snug strap before you buckle keeps the skis off the paint."
-            " Did that on a Crystal lot changeover last week and it held fine."
-        )
+        text = _choose_draft_text("goodwill", link_token)
         return {
             "text": text,
             "include_link": bool(goodwill_allow_links),
@@ -225,4 +217,16 @@ def _topic_hint(post: "Post") -> str:
         return f"the crew in r/{subreddit}"
 
     return "your setup"
+
+
+def _choose_draft_text(category: str, link_token: str) -> str:
+    drafts_cfg = settings.DRAFTS_CFG or {}
+    options = drafts_cfg.get(category, [])
+    if isinstance(options, list) and options:
+        return str(options[0])
+
+    if category == "product":
+        return f"A compact organizer like {link_token} keeps things steady while you finish setup."
+
+    return "A quick organizer prevents scuffs while you set up."
 

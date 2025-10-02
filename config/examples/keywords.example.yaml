@@ -1,0 +1,16 @@
+# Category & synonym patterns (case-insensitive regex strings)
+normalize:
+  replace:
+    - { from: "[’]", to: "'" }
+    - { from: "[-–—]", to: " " }
+product_signals:
+  problem: ["slip", "sliding", "fall off", "scratch", "scuff"]
+  context: ["entryway", "commute", "doorway", "car door", "desk setup", "pet area"]
+  solution: ["holder", "organizer", "hook", "mat", "tray"]
+goodwill_signals:
+  beginner: ["first time", "beginner", "new here", "any tips", "how do you organize", "checklist", "setup tips"]
+weights:
+  problem_and_context: 0.5
+  problem_only: 0.3
+  solution: 0.2
+  beginner: 0.2

@@ -25,19 +25,21 @@ n8n (Cron)
 ```
 astroturfBbot/
   config/
-    defaults.example.yaml
-    keywords.example.yaml
-    persona.example.json
-    subs.example.json
+    defaults.yaml
+    keywords.yaml
+    persona.json
+    subs.json
+    templates.md
+    examples/
+      defaults.example.yaml
+      keywords.example.yaml
+      persona.example.json
+      subs.example.json
+      templates.example.md
   brain/
     __init__.py
     app.py
     settings.py
-    prompts/
-      goodwill.txt
-      persona_skiing.json
-      soft_reco.txt
-      story.txt
     scoring/
       __init__.py
       embeddings.py
@@ -73,7 +75,7 @@ astroturfBbot/
    ```bash
    curl http://127.0.0.1:8000/health
    curl http://127.0.0.1:8000/config
-   curl -X POST http://127.0.0.1:8000/score_and_draft -H "Content-Type: application/json" -d '{"posts":[{"id":"t3_demo","title":"Need a better ski rack","selftext":null}]}'
+   curl -X POST http://127.0.0.1:8000/score_and_draft -H "Content-Type: application/json" -d '{"posts":[{"id":"t3_demo","title":"Need a better organizer","selftext":null}]}'
    ```
 
 ### `/score_and_draft` response snapshot
@@ -83,10 +85,10 @@ astroturfBbot/
     {
       "id": "t3_demo",
       "score": 0.7,
-      "rationale": "rack/parking-lot slip signals",
+      "rationale": "organizer slip signals",
       "category": "product",
       "draft": {
-        "text": "If your skis are sliding while you buckle boots, a compact clamp holder like this {{PRODUCT_URL}} keeps them locked until you're rolling again.",
+        "text": "If things keep slipping during setup, a compact organizer like this {{PRODUCT_URL}} keeps them in place until you're ready.",
         "include_link": true,
         "link_token": "{{PRODUCT_URL}}"
       },
@@ -108,25 +110,27 @@ Configuration lives under `config/` and is loaded via environment variables:
 - `CONFIG_PERSONA_PATH` → JSON persona/tone guidance.
 - `CONFIG_SUBS_PATH` → JSON array describing subreddit rules.
 - `CONFIG_KEYWORDS_PATH` → YAML of keyword patterns and weights.
+- `CONFIG_DRAFTS_PATH` → YAML containing goodwill and product draft templates (with optional `{{PRODUCT_URL}}` token).
 
-Tracked `*.example.*` files provide neutral defaults—copy them to their non-example counterparts for real use:
+Tracked `*.example.*` files under `config/examples/` provide neutral defaults—copy them to their non-example counterparts for real use:
 
 ```bash
-cp config/defaults.example.yaml config/defaults.yaml
-cp config/persona.example.json config/persona.json
-cp config/subs.example.json config/subs.json
-cp config/keywords.example.yaml config/keywords.yaml
+cp config/examples/defaults.example.yaml config/defaults.yaml
+cp config/examples/persona.example.json config/persona.json
+cp config/examples/subs.example.json config/subs.json
+cp config/examples/keywords.example.yaml config/keywords.yaml
+cp config/examples/templates.example.md config/templates.md
 ```
 
-Keep product- or campaign-specific data in those config files rather than in Python modules or prompts. If you rely on YAML configs, ensure `pyyaml` is installed (see install step above).
+Keep product- or campaign-specific data in those config files rather than in Python modules or prompts. Draft templates should reference `{{PRODUCT_URL}}` when a human needs to swap in a real link. If you rely on YAML configs, ensure `pyyaml` is installed (see install step above).
 
-Legacy `brain/prompts/` assets have been removed. Persona and tone live in `config/persona.json` (copy from `persona.example.json`), and any optional human drafting notes belong in `config/templates.md` (see `config/templates.example.md`).
+Legacy `brain/prompts/` assets have been removed. Persona and tone live in `config/persona.json` (copy from `config/examples/persona.example.json`), and any optional human drafting notes belong in `config/templates.md` (see `config/examples/templates.example.md`).
 
 ## Quickstart
 1. Create a Reddit app (type `script`) -> capture `client_id` and `secret`.
 2. Create a Discord webhook (Server Settings -> Integrations -> Webhooks).
 3. Copy `.env.example` to `.env`, fill secrets, and adjust the `CONFIG_*` paths if your config files live elsewhere.
-4. Copy the example configs under `config/` to their working counterparts and edit them for your brand.
+4. Copy the example configs under `config/examples/` to their working counterparts and edit them for your brand.
 5. Brain:
     ```bash
     cd brain
@@ -141,3 +145,16 @@ Legacy `brain/prompts/` assets have been removed. Persona and tone live in `conf
     ```
     Import `workflows/reddit-scout.json` and `workflows/reddit-publish.json`, set credentials, then run once manually.
 7. Approve a draft in Discord to test end-to-end.
+
+## Phase 2A: n8n skeleton + Discord ping
+1. Ensure `DISCORD_WEBHOOK_URL` is set in your repo `.env`.
+2. Launch n8n:
+   ```powershell
+   docker compose -f n8n/docker-compose.yml up -d
+   ```
+3. Browse to http://localhost:5678 and import `n8n/workflows/reddit-scout.json`.
+4. Edit the Discord node URL if needed so it reads `{{$env.DISCORD_WEBHOOK_URL}}`, then click **Execute Node** to test.
+5. Confirm a message posts in Discord showing the title, category, score, and draft text.
+
+> Brain must be running locally at http://127.0.0.1:8000 (the workflow reaches it via http://host.docker.internal:8000).
+
