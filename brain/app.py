@@ -77,6 +77,7 @@ def config() -> dict:
             "persona": settings.config_file_exists(settings.CONFIG_PERSONA_PATH),
             "subs": settings.config_file_exists(settings.CONFIG_SUBS_PATH),
             "keywords": settings.config_file_exists(settings.CONFIG_KEYWORDS_PATH),
+            "drafts": settings.config_file_exists(settings.CONFIG_DRAFTS_PATH),
         },
     }
 
@@ -104,5 +105,5 @@ def score_and_draft(payload: ScoreAndDraftRequest) -> ScoreAndDraftResponse:
 
 # curl http://127.0.0.1:8000/health
 # curl http://127.0.0.1:8000/config
-# curl -X POST http://127.0.0.1:8000/score_and_draft -H "Content-Type: application/json" -d "{"posts":[{"id":"t3_demo","title":"Ski rack worry","selftext":null}]}"
+# curl -X POST http://127.0.0.1:8000/score_and_draft -H "Content-Type: application/json" -d "{"posts":[{"id":"t3_demo","title":"Organizer slipping issue","selftext":null}]}"
 

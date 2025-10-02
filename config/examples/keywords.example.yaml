@@ -4,11 +4,11 @@ normalize:
     - { from: "[’]", to: "'" }
     - { from: "[-–—]", to: " " }
 product_signals:
-  problem: ["slide", "sliding", "slip", "fall off", "skate", "wander"]
-  context: ["parking[\\s-]?lot", "buckling boots", "boot buckle", "tailgate", "lean(ing)? (on|against) (car|vehicle)"]
-  solution: ["holder", "compact holder", "lean spot", "protect(ion)? edge(s)?", "paint", "ding(s)?"]
+  problem: ["slip", "sliding", "fall off", "scratch", "scuff"]
+  context: ["entryway", "commute", "doorway", "car door", "desk setup", "pet area"]
+  solution: ["holder", "organizer", "hook", "mat", "tray"]
 goodwill_signals:
-  beginner: ["first season", "beginner", "new to .*", "any tips", "organize gear", "car setup", "winter prep", "parking[\\s-]?lot routine"]
+  beginner: ["first time", "beginner", "new here", "any tips", "how do you organize", "checklist", "setup tips"]
 weights:
   problem_and_context: 0.5
   problem_only: 0.3

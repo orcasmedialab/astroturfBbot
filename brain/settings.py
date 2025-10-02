@@ -74,11 +74,13 @@ CONFIG_DEFAULTS_PATH = os.getenv("CONFIG_DEFAULTS_PATH", "config/defaults.yaml")
 CONFIG_PERSONA_PATH  = os.getenv("CONFIG_PERSONA_PATH", "config/persona.json")
 CONFIG_SUBS_PATH     = os.getenv("CONFIG_SUBS_PATH", "config/subs.json")
 CONFIG_KEYWORDS_PATH = os.getenv("CONFIG_KEYWORDS_PATH", "config/keywords.yaml")
+CONFIG_DRAFTS_PATH   = os.getenv("CONFIG_DRAFTS_PATH", "config/drafts.yaml")
 
 DEFAULTS_CFG = load_config_file(CONFIG_DEFAULTS_PATH, "config/examples/defaults.example.yaml")
 PERSONA_CFG  = load_config_file(CONFIG_PERSONA_PATH, "config/examples/persona.example.json")
 SUBS_CFG     = load_config_file(CONFIG_SUBS_PATH, "config/examples/subs.example.json")
 KEYWORDS_CFG = load_config_file(CONFIG_KEYWORDS_PATH, "config/examples/keywords.example.yaml")
+DRAFTS_CFG   = load_config_file(CONFIG_DRAFTS_PATH, "config/examples/drafts.example.yaml")
 
 
 def config_file_exists(path_str: str | None) -> bool:
