@@ -25,19 +25,21 @@ n8n (Cron)
 ```
 astroturfBbot/
   config/
-    defaults.example.yaml
-    keywords.example.yaml
-    persona.example.json
-    subs.example.json
+    defaults.yaml
+    keywords.yaml
+    persona.json
+    subs.json
+    templates.md
+    examples/
+      defaults.example.yaml
+      keywords.example.yaml
+      persona.example.json
+      subs.example.json
+      templates.example.md
   brain/
     __init__.py
     app.py
     settings.py
-    prompts/
-      goodwill.txt
-      persona_skiing.json
-      soft_reco.txt
-      story.txt
     scoring/
       __init__.py
       embeddings.py
@@ -109,24 +111,25 @@ Configuration lives under `config/` and is loaded via environment variables:
 - `CONFIG_SUBS_PATH` → JSON array describing subreddit rules.
 - `CONFIG_KEYWORDS_PATH` → YAML of keyword patterns and weights.
 
-Tracked `*.example.*` files provide neutral defaults—copy them to their non-example counterparts for real use:
+Tracked `*.example.*` files under `config/examples/` provide neutral defaults—copy them to their non-example counterparts for real use:
 
 ```bash
-cp config/defaults.example.yaml config/defaults.yaml
-cp config/persona.example.json config/persona.json
-cp config/subs.example.json config/subs.json
-cp config/keywords.example.yaml config/keywords.yaml
+cp config/examples/defaults.example.yaml config/defaults.yaml
+cp config/examples/persona.example.json config/persona.json
+cp config/examples/subs.example.json config/subs.json
+cp config/examples/keywords.example.yaml config/keywords.yaml
+cp config/examples/templates.example.md config/templates.md
 ```
 
 Keep product- or campaign-specific data in those config files rather than in Python modules or prompts. If you rely on YAML configs, ensure `pyyaml` is installed (see install step above).
 
-Legacy `brain/prompts/` assets have been removed. Persona and tone live in `config/persona.json` (copy from `persona.example.json`), and any optional human drafting notes belong in `config/templates.md` (see `config/templates.example.md`).
+Legacy `brain/prompts/` assets have been removed. Persona and tone live in `config/persona.json` (copy from `config/examples/persona.example.json`), and any optional human drafting notes belong in `config/templates.md` (see `config/examples/templates.example.md`).
 
 ## Quickstart
 1. Create a Reddit app (type `script`) -> capture `client_id` and `secret`.
 2. Create a Discord webhook (Server Settings -> Integrations -> Webhooks).
 3. Copy `.env.example` to `.env`, fill secrets, and adjust the `CONFIG_*` paths if your config files live elsewhere.
-4. Copy the example configs under `config/` to their working counterparts and edit them for your brand.
+4. Copy the example configs under `config/examples/` to their working counterparts and edit them for your brand.
 5. Brain:
     ```bash
     cd brain
